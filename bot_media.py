@@ -17,6 +17,7 @@ def start(message:types.Message):
     
 def data_base(message:types.Message): 
     global data   
+    global keybord_nums
     with open ('data.json') as file:
         data = json.load(file)
     
@@ -34,14 +35,22 @@ def data_base(message:types.Message):
 def handle_text(message):
     global number_news
     global keybord_chose
-    number_news = int(message.text[-1])
-    keybord_chose = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button1  = types.KeyboardButton("Description")
-    button2 = types.KeyboardButton('Photo')
-    button3 = types.KeyboardButton('Quit')
-    keybord_chose.add(button1,button2,button3)
-    message2 = bot.send_message(message.chat.id, "You can see Description of this news and Photo", reply_markup=keybord_chose)
-    bot.register_next_step_handler(message2, chose)
+    page = message.text
+    print(page)
+    number_news = int(''.join([ i for i in page if i.isdigit()]))
+    print(number_news)
+    if number_news<=20:
+        keybord_chose = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1  = types.KeyboardButton("Description")
+        button2 = types.KeyboardButton('Photo')
+        button3 = types.KeyboardButton('Quit')
+        keybord_chose.add(button1,button2,button3)
+        message2 = bot.send_message(message.chat.id, "You can see Description of this news and Photo", reply_markup=keybord_chose)
+        bot.register_next_step_handler(message2, chose)
+    else:
+        bot.send_message(message.chat.id, text="Такого номера нет!",reply_markup=types.ReplyKeyboardRemove())
+        message2 = bot.send_message(message.chat.id, "Выбери номер новости: ", reply_markup=keybord_nums)
+        bot.register_next_step_handler(message2, handle_text)
     
 def chose(message):
     if message.text == 'Description':
