@@ -36,9 +36,9 @@ def handle_text(message):
     global number_news
     global keybord_chose
     page = message.text
-    print(page)
+
     number_news = int(''.join([ i for i in page if i.isdigit()]))
-    print(number_news)
+
     if number_news<=20:
         keybord_chose = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1  = types.KeyboardButton("Description")
