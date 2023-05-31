@@ -5,7 +5,7 @@ import json
 import datetime
 
 date = datetime.date.today()
-
+data_base = []
 
 def write_json(data):
     with open('data.json', 'w', encoding='utf-8') as file:
@@ -20,10 +20,11 @@ def get_html(url):
 
 
 def news_kaktus(html):
+    global data_base
     global date
     soup = BeautifulSoup(html, 'lxml')
     list_ = soup.find('div', class_='Tag--articles').find_all('div', class_='ArticleItem')
-    data_base = []
+    
     
     list_count = len(list_)
     print(list_count)
@@ -54,8 +55,12 @@ def news_kaktus(html):
     if len(data_base)!=20:
         date = date - datetime.timedelta(days=1)
         data_news()
-    print("Программа закончила работу.")
-    write_json(data_base)
+    elif len(data_base) ==20:
+        print("Программа закончила работу.")
+        write_json(data_base)
+        data_base = []
+        date = datetime.date.today()
+        
     
         
 

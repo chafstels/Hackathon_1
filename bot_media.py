@@ -53,11 +53,15 @@ def handle_text(message):
         bot.register_next_step_handler(message2, handle_text)
     
 def chose(message):
+    global keybord
     if message.text == 'Description':
-        bot.send_message(message.chat.id, text=data[number_news-1]['description'],reply_markup=types.ReplyKeyboardRemove())
+        letter = data[number_news-1]['description'][:500]
+        letter = letter.split('.')
+        letter = '.'.join(letter[:-1]) + '.'
+        bot.send_message(message.chat.id, text=letter,reply_markup=types.ReplyKeyboardRemove())
         keybord = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1  = types.KeyboardButton("Yes")
-        button2 = types.KeyboardButton('NO')
+        button2 = types.KeyboardButton('No')
         keybord.add(button1,button2)
         bot.send_message(message.chat.id, text='Читать полностью: '+ data[number_news-1]['link'])
         message2 = bot.send_message(message.chat.id, "Хотите посмотреть другие новости?", reply_markup=keybord)
@@ -80,8 +84,12 @@ def chose(message):
 def end(message:types.Message):
     if message.text == "Yes":
         data_base(message)
-    else:
+    elif message.text == "No":
         bot.send_message(message.chat.id, text="До свидания",reply_markup=types.ReplyKeyboardRemove())
+    else:
+        bot.send_message(message.chat.id, text="Такой команды нету!",reply_markup=types.ReplyKeyboardRemove())
+        message2 = bot.send_message(message.chat.id, "Хотите посмотреть другие новости?", reply_markup=keybord)
+        bot.register_next_step_handler(message2,end)
 
 
 def main():
